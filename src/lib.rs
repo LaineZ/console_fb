@@ -18,6 +18,7 @@ fn do_vecs_match<T: PartialEq>(a: &Vec<T>, b: &Vec<T>) -> bool {
 }
 
 impl FrameBuffer {
+    /// Creates a framebuffer frame
     pub fn create(width: u16, height: u16) -> Self {
         let mut frame = Vec::with_capacity((width * height).into());
         for _ in 0..(width * height) {
@@ -30,6 +31,7 @@ impl FrameBuffer {
         }
     }
 
+    /// Draws a frame in console
     pub fn push_fb(&mut self, mut frame: Vec<char>, stdout: &mut std::io::Stdout) {
         if !do_vecs_match(&frame, &self.frame) {
             mem::swap(&mut frame, &mut self.frame);
@@ -46,10 +48,12 @@ impl FrameBuffer {
         }
     }
 
+    /// Get symbol in framebuffer
     pub fn get(&mut self, x: u16, y: u16) -> char {
         self.frame[(y * self.width + x) as usize]
     }
 
+    /// Set string in framebuffer
     pub fn set(&mut self, text: &str, x: u16, y: u16) {
         for (i, v) in text.chars().enumerate() {
             if (y * self.width + (x + i as u16)) < self.frame.len() as u16 {
