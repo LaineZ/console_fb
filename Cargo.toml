@@ -8,6 +8,5 @@ edition = "2018"
 
 [dependencies]
 crossterm = "0.17.5"
-
 [lib]
 crate-type = ["cdylib"]

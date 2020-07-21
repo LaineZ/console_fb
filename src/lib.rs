@@ -5,6 +5,7 @@ use crossterm::{
 };
 
 use std::mem;
+
 #[derive(Clone)]
 pub struct FrameBuffer {
     frame: Vec<char>,
@@ -31,7 +32,7 @@ impl FrameBuffer {
         }
     }
 
-    /// Draws a frame in console
+    /// Draws a frame in console. Recommended disable cursor. Because it will interfere with enjoyment of the drawing
     pub fn push_fb(&mut self, mut frame: Vec<char>, stdout: &mut std::io::Stdout) {
         if !do_vecs_match(&frame, &self.frame) {
             mem::swap(&mut frame, &mut self.frame);
