@@ -1,12 +1,7 @@
 //! # Console (Crossterm) double-buffering library
 //! ![Scheme of working](https://i.imgur.com/K6dZxZy.png)
 
-
-use crossterm::{
-    cursor,
-    style::Print,
-    ExecutableCommand,
-};
+use crossterm::{cursor, style::Print, ExecutableCommand};
 
 use std::mem;
 
@@ -26,16 +21,8 @@ fn do_vecs_match<T: PartialEq>(a: &Vec<T>, b: &Vec<T>) -> bool {
 impl FrameBuffer {
     /// Creates an empty framebuffer with specified dimensions. Usually it is created at the beginning of the program. But needs to recreate if terminal window is resized
     pub fn create(width: u16, height: u16) -> Self {
-        let mut frame = Vec::with_capacity((width * height).into());
-        let mut current_frame = Vec::with_capacity((width * height).into());
-
-        for _ in 0..(width * height) {
-            current_frame.push(' '); // empty symbol...
-        }
-
-        for _ in 0..(width * height) {
-            frame.push(' '); // empty symbol...
-        }
+        let frame = vec![' '; (width * height) as usize];
+        let current_frame = vec![' '; (width * height) as usize];
 
         FrameBuffer {
             frame,
@@ -52,7 +39,8 @@ impl FrameBuffer {
 
             for x in 0..self.width {
                 for y in 0..self.height {
-                    if self.frame[(y * self.width + x) as usize] != self.current_frame[(y * self.width + x) as usize]
+                    if self.frame[(y * self.width + x) as usize]
+                        != self.current_frame[(y * self.width + x) as usize]
                     {
                         &stdout.execute(cursor::MoveTo(x, y));
                         &stdout.execute(Print(self.frame[(y * self.width + x) as usize]));
