@@ -2,10 +2,10 @@
 //! ![Scheme of working](https://i.imgur.com/K6dZxZy.png)
 
 use crossterm::{cursor, style::Print, ExecutableCommand};
-
 use std::mem;
 
 #[derive(Clone)]
+/// The structure of framebuffer
 pub struct FrameBuffer {
     current_frame: Vec<char>,
     frame: Vec<char>,
@@ -13,6 +13,7 @@ pub struct FrameBuffer {
     height: u16,
 }
 
+/// Vector match condition
 fn do_vecs_match<T: PartialEq>(a: &Vec<T>, b: &Vec<T>) -> bool {
     let matching = a.iter().zip(b.iter()).filter(|&(a, b)| a == b).count();
     matching == a.len() && matching == b.len()
