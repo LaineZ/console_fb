@@ -2,21 +2,23 @@
 /// A basic-benchmark example
 
 use console_fb::FrameBuffer;
-use crossterm::{cursor, style::Print, terminal, ErrorKind, ExecutableCommand};
+use crossterm::{cursor, style::Print, terminal, ErrorKind, ExecutableCommand, QueueableCommand};
 use std::io::{Write, stdout};
 use std::time::Instant;
+use cursor::Hide;
 
 fn main() -> Result<(), ErrorKind> {
     let mut stdout = stdout();
-    let mut fb = FrameBuffer::create(80, 25);
-
+    let (w, h) = terminal::size()?;
+    let mut fb = FrameBuffer::create(w, h);
+    stdout.queue(Hide)?;
     stdout.execute(terminal::Clear(terminal::ClearType::All))?;
 
     let start_test1 = Instant::now();
     for i in 0..9 {
         &stdout.execute(terminal::Clear(terminal::ClearType::All))?;
-        for y in 0..24 {
-            for x in 0..80 {
+        for y in 0..h {
+            for x in 0..w {
                 if x % 2 == 0 {
                     &stdout.execute(cursor::MoveTo(x, y));
                     &stdout.execute(Print(i));
@@ -29,8 +31,8 @@ fn main() -> Result<(), ErrorKind> {
 
     let start_test2 = Instant::now();
     for i in 0..9 {
-        for y in 0..24 {
-            for x in 0..80 {
+        for y in 0..h {
+            for x in 0..w {
                 if x % 2 == 0 {
                     fb.set(i.to_string(), x, y);
                 }
