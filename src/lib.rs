@@ -2,7 +2,7 @@
 //! ![Scheme of working](https://i.imgur.com/K6dZxZy.png)
 
 use crossterm::{cursor, style::Print, ExecutableCommand};
-use std::mem;
+use std::{io::Write, mem};
 
 #[derive(Clone)]
 /// The structure of framebuffer
@@ -11,12 +11,6 @@ pub struct FrameBuffer {
     frame: Vec<char>,
     width: u16,
     height: u16,
-}
-
-/// Vector match condition
-fn do_vecs_match<T: PartialEq>(a: &Vec<T>, b: &Vec<T>) -> bool {
-    let matching = a.iter().zip(b.iter()).filter(|&(a, b)| a == b).count();
-    matching == a.len() && matching == b.len()
 }
 
 impl FrameBuffer {
@@ -35,7 +29,7 @@ impl FrameBuffer {
 
     /// Draws a frame in console. Recommended disable cursor. Because it will interfere with enjoyment of the drawing
     pub fn push_fb(&mut self, stdout: &mut std::io::Stdout) {
-        if !do_vecs_match(&self.frame, &self.current_frame) {
+        if &self.frame != &self.current_frame {
             mem::swap(&mut self.frame, &mut self.current_frame);
 
             for x in 0..self.width {
@@ -48,6 +42,7 @@ impl FrameBuffer {
                     }
                 }
             }
+            &stdout.flush();
         }
     }
 
@@ -56,9 +51,9 @@ impl FrameBuffer {
         self.frame[(y * self.width + x) as usize]
     }
 
-    /// Set string in framebuffer
-    pub fn set(&mut self, text: &str, x: u16, y: u16) {
-        for (i, v) in text.chars().enumerate() {
+    /// Set string or &str in framebuffer in specified coordinates
+    pub fn set<S: Into<String>>(&mut self, text: S, x: u16, y: u16) {
+        for (i, v) in text.into().chars().enumerate() {
             if (y * self.width + (x + i as u16)) < self.current_frame.len() as u16 {
                 self.current_frame[(y * self.width + (x + i as u16)) as usize] = v;
             }
