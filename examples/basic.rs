@@ -2,7 +2,7 @@
 /// A basic-benchmark example
 
 use console_fb::FrameBuffer;
-use crossterm::{cursor, style::Print, terminal, ErrorKind, ExecutableCommand, QueueableCommand};
+use crossterm::{cursor, style::{Colors, Print, Color}, terminal, ErrorKind, ExecutableCommand, QueueableCommand};
 use std::io::{Write, stdout};
 use std::time::Instant;
 use cursor::Hide;
@@ -30,6 +30,7 @@ fn main() -> Result<(), ErrorKind> {
     let test1_time = start_test1.elapsed();
 
     let start_test2 = Instant::now();
+    fb.set_color(0, 0, 10, 10, Colors::new(Color::Red, Color::Blue));
     for i in 0..9 {
         for y in 0..h {
             for x in 0..w {
@@ -38,7 +39,7 @@ fn main() -> Result<(), ErrorKind> {
                 }
             }
         }
-        fb.push_fb(&mut stdout);
+        fb.push_fb(&mut stdout, true);
     }
     let test2_time = start_test2.elapsed();
     &stdout.execute(terminal::Clear(terminal::ClearType::All))?;
